@@ -118,7 +118,7 @@ Microsoft has documented the same broad macOS ClickFix pattern: a fake verificat
 
 ## Research tooling
 
-Static analysis and report preparation used OpenAI's `gpt-daybreak-blue-latest` at `xhigh` reasoning effort. The local session metadata records that exact alias and setting; [OpenAI's model catalog identifies the deprecated Daybreak Blue alias with `gpt-5.6-sol`](https://developers.openai.com/api/docs/models/gpt-daybreak-blue-latest). Findings were checked against the captured artifacts and the external sources linked above.
+Static analysis and report preparation used OpenAI GPT-6 Sol with Daybreak Blue enabled at `xhigh` reasoning effort. The app showed GPT-6 Sol selected, while the local session metadata recorded the `gpt-daybreak-blue-latest` routing label and `xhigh`; [OpenAI documents GPT-6 Sol with the `daybreak_blue` access program](https://developers.openai.com/api/docs/guides/daybreak). Findings were checked against the captured artifacts and the external sources linked above.
 
 ## Timeline
 
