@@ -151,5 +151,7 @@ This closes the social-engineering loop. The attacker can make the browser appea
 
 The browser behavior and two shell decoding layers are directly supported by captured evidence. The association with ClickFix is high confidence based on technique and contemporaneous threat-intelligence listings.
 
-The final JXA response was intentionally not retrieved. Its malware family, persistence behavior, data-theft capabilities, and infrastructure beyond the two observed domains are therefore unknown. The server-side path that introduced the script into the WordPress page is also unknown.
+The JXA response was subsequently retrieved as inert bytes and statically analyzed. Its environment checks, decrypted configuration, Finder-app construction, and Mach-O download are documented in [`macos-payload.md`](macos-payload.md). The Mach-O was no longer available from its origin and was not executed. Public sample indexes identify its hash and classify it as a password-stealing macOS Trojan, but this report does not independently assign a family.
+
+The server-side path that introduced the script into the WordPress page remains unknown.
 

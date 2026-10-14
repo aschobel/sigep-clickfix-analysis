@@ -2,9 +2,9 @@
 
 ![A fake Cloudflare Human Verification dialog instructing a Mac user to open Terminal, paste, and press Enter](assets/fake-cloudflare-clickfix.png)
 
-On October 13, 2026, `johnshopkins.sigep.org` displayed this fake Cloudflare verification flow. The page told a Mac user to open Terminal, paste the clipboard, and press Enter. That sequence would have executed a remotely supplied JavaScript for Automation (JXA) payload under the user's account.
+On October 13, 2026, `johnshopkins.sigep.org` displayed this fake Cloudflare verification flow. The page told a Mac user to open Terminal, paste the clipboard, and press Enter. That sequence would have executed a remotely supplied JavaScript for Automation (JXA) loader under the user's account, installed a Finder-impostor application in the user's cache directory, and launched a Mach-O Trojan.
 
-The command was **not executed**. This report is a static analysis of the page, its decoded browser script, and the clipboard command it generated. No final-stage payload was downloaded.
+The command was **not executed**. This report is a static analysis of the page, its decoded browser script, the clipboard command it generated, and the downloaded JXA loader. No malicious code was evaluated or launched. The final Mach-O was no longer available from its origin during analysis, but the exact file is indexed by hash in MalwareBazaar.
 
 > **Safety:** The live commands and URLs in this repository are defanged or reduced to pseudocode. Do not visit the affected page or reconstruct and execute the command.
 
@@ -57,7 +57,15 @@ if the response body is exactly "ok":
     pipe the response to: osascript -l JavaScript
 ```
 
-The final pipeline used `curl -sfL`, which hides output, fails on HTTP errors, and follows redirects. `osascript -l JavaScript` then interprets the response as JXA. At that point the remote server can supply arbitrary code with the permissions of the logged-in user.
+The final pipeline used `curl -sfL`, which hides output, fails on HTTP errors, and follows redirects. `osascript -l JavaScript` then interprets the response as JXA. Static recovery of that JXA showed that it:
+
+1. checks for virtual machines, debuggers, disabled System Integrity Protection, and selected CIS-region locale signals;
+2. decrypts its hidden configuration only when the checks describe an intended physical-Mac target;
+3. creates `~/Library/Caches/com.apple.finder/Finder.app` with the real Finder icon;
+4. gives the bundle identifier `apple.finder.runtime`, hides its Dock presence, and configures it as a background application;
+5. downloads a universal Mach-O as `Contents/MacOS/3F9730CF`, sets mode `0755`, and launches the bundle through `NSWorkspace`.
+
+The referenced Mach-O has SHA-256 `ddb7afd3e2d53100759643bb3b94b5cf011840d518d5553f33ae5c780af784e6`. [MalwareBazaar identifies the exact filename and hash](https://bazaar.abuse.ch/sample/ddb7afd3e2d53100759643bb3b94b5cf011840d518d5553f33ae5c780af784e6/) and records a `Trojan[PSW]/MacOS.Agent` malicious verdict from Hybrid Analysis.
 
 The first request also appears to act as a one-time token redemption. In parallel, the fake browser overlay polls the control server for a `consumed` flag. This lets the web page react to successful Terminal execution and reassure the victim with a false “Verification complete” message.
 
@@ -67,7 +75,9 @@ The first request also appears to act as a one-time token redemption. In paralle
 - Reloading the SigEp page reproduced the malicious overlay during the observation window.
 - The injected program implemented clipboard delivery, fake instructions, server polling, and an optional redirect.
 - The supplied shell command led to remote JXA execution if pasted and run.
-- The command was not executed, so the final JXA payload and its capabilities remain unknown.
+- The recovered JXA created and launched a hidden Finder-impostor application from the user's cache directory.
+- The referenced executable is a known universal Mach-O with a password-stealing Trojan verdict in public threat intelligence.
+- The command was not executed, and the Mach-O was not run or loaded during this analysis.
 
 The evidence does **not** identify how the website was compromised. The site used WordPress, but the injection could have come from a compromised theme, plugin, database value, tag manager, administrator account, hosting account, or server. Naming a specific entry point would be speculation.
 
@@ -80,6 +90,11 @@ The evidence does **not** identify how the website was compromised. The site use
 | `7f6210a091c37ae9bfa1bfd2562d440d842370e171427c6b` | Campaign key in the observed loader |
 | `bw-cf-root` | DOM ID used by the fake verification overlay |
 | `bw-cf-style` | DOM ID used by the injected stylesheet |
+| `~/Library/Caches/com.apple.finder/Finder.app` | Finder-impostor application created by the JXA loader |
+| `apple.finder.runtime` | Bundle identifier assigned to the impostor application |
+| `3F9730CF` | Installed Mach-O executable name |
+| `032d571c30c889a9cd2d459f5378eb50b87da0e077898ec93b8e4dcea7ca3c19` | SHA-256 of the retrieved obfuscated JXA loader |
+| `ddb7afd3e2d53100759643bb3b94b5cf011840d518d5553f33ae5c780af784e6` | SHA-256 of the referenced universal Mach-O |
 
 Both domains had contemporaneous ClickFix-related ThreatFox entries: [`browse-veriid.beer`](https://threatfox.abuse.ch/ioc/1961703/) and [`policysync.pro`](https://threatfox.abuse.ch/ioc/1961428/).
 
@@ -94,6 +109,7 @@ Microsoft has documented the same broad macOS ClickFix pattern: a fake verificat
 ## Repository contents
 
 - [`analysis/technical-walkthrough.md`](analysis/technical-walkthrough.md) reconstructs the browser loader and victim flow.
+- [`analysis/macos-payload.md`](analysis/macos-payload.md) documents the statically recovered JXA and final Mach-O indicator.
 - [`lab/firecracker-design.md`](lab/firecracker-design.md) proposes a contained, offline reproduction of the web layer.
 - [`indicators.csv`](indicators.csv) contains the observed indicators in a machine-readable form.
 - [`assets/fake-cloudflare-clickfix.png`](assets/fake-cloudflare-clickfix.png) is the original screenshot.
@@ -105,6 +121,7 @@ Microsoft has documented the same broad macOS ClickFix pattern: a fake verificat
 | 2026-10-13 19:02 PDT | Screenshot captured on the affected SigEp chapter page |
 | 2026-10-13 | Page source, decoded browser code, and clipboard command analyzed without execution |
 | 2026-10-13 | Reload reproduced the malicious page in Safari |
+| 2026-10-13 | JXA loader retrieved, statically decrypted, and traced to a known Mach-O sample |
 | Pending | Website owner notification and remediation confirmation |
 
 Publication should follow owner notification and, ideally, confirmation that the injected script has been removed. The observation above only describes the site during the stated window.

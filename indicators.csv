@@ -4,4 +4,10 @@ policysync.pro,domain,JXA payload host referenced by decoded command,2026-10-13,
 7f6210a091c37ae9bfa1bfd2562d440d842370e171427c6b,campaign-key,Loader and API campaign key,2026-10-13,Observed in injected script URL and decoded program
 bw-cf-root,dom-id,Fake verification overlay root,2026-10-13,Observed in decoded browser program
 bw-cf-style,dom-id,Injected overlay stylesheet,2026-10-13,Observed in decoded browser program
+~/Library/Caches/com.apple.finder/Finder.app,path,Finder-impostor application created by JXA loader,2026-10-13,Statically recovered from authenticated embedded stage
+apple.finder.runtime,bundle-id,Identifier assigned to Finder-impostor application,2026-10-13,Statically recovered from authenticated embedded stage
+3F9730CF,filename,Installed Mach-O executable name,2026-10-13,Statically recovered from authenticated embedded stage
+032d571c30c889a9cd2d459f5378eb50b87da0e077898ec93b8e4dcea7ca3c19,sha256,Obfuscated JXA loader,2026-10-13,Locally retrieved and hashed
+97a6ed9d6d101dc6dd5a46a2afaff58bb3c1cbb577092337abfffd6d9a8c0f51,sha256,Statically recovered JXA downloader stage,2026-10-13,Recovered without JavaScript evaluation
+ddb7afd3e2d53100759643bb3b94b5cf011840d518d5553f33ae5c780af784e6,sha256,Universal Mach-O referenced by JXA loader,2026-10-13,MalwareBazaar filename 0G7Xcm07FD8I
 
