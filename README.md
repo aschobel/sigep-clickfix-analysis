@@ -8,6 +8,8 @@ The command was **not executed**. This report is a static analysis of the page, 
 
 > **Safety:** The live commands and URLs in this repository are defanged or reduced to pseudocode. Do not visit the affected page or reconstruct and execute the command.
 
+> **Defensive-research notice:** This repository contains no malware binaries, complete malicious scripts, or runnable exploit code. It documents an observed campaign so defenders can recognize and investigate it. For content or abuse concerns, see [`SECURITY.md`](SECURITY.md).
+
 ## What happened
 
 The HTML response observed in Safari included this third-party script immediately before `</head>`:
@@ -124,5 +126,5 @@ Microsoft has documented the same broad macOS ClickFix pattern: a fake verificat
 | 2026-10-13 | JXA loader retrieved, statically decrypted, and traced to a known Mach-O sample |
 | Pending | Website owner notification and remediation confirmation |
 
-Publication should follow owner notification and, ideally, confirmation that the injected script has been removed. The observation above only describes the site during the stated window.
+Website-owner notification and remediation confirmation remain pending at publication time. The observation above only describes the site during the stated window.
 
