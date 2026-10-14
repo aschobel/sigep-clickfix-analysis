@@ -1,0 +1,7 @@
+indicator,type,role,first_observed,notes
+browse-veriid.beer,domain,Injected JavaScript control API and token redemption,2026-10-13,ThreatFox IOC 1961703
+policysync.pro,domain,JXA payload host referenced by decoded command,2026-10-13,ThreatFox IOC 1961428
+7f6210a091c37ae9bfa1bfd2562d440d842370e171427c6b,campaign-key,Loader and API campaign key,2026-10-13,Observed in injected script URL and decoded program
+bw-cf-root,dom-id,Fake verification overlay root,2026-10-13,Observed in decoded browser program
+bw-cf-style,dom-id,Injected overlay stylesheet,2026-10-13,Observed in decoded browser program
+
